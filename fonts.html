@@ -1,0 +1,104 @@
+<html>
+<head>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+  <style>
+    #text {
+      font-size: 60px;
+    }
+  </style>
+  <script type="text/javascript">
+
+    "use strict";
+
+    $(function(){
+
+      function addGoogleFont(FontName) { 
+       // http://fonts.googleapis.com/css?family=Tangerine
+
+        $("head").append("<link href='http://fonts.googleapis.com/css?family=" + FontName + "' rel='stylesheet' type='text/css'>");
+      }
+
+
+     $.getJSON("https://crossorigin.me/http://lasvegaswebdesign.co/test/font/meta.json", function (data) {
+
+        var fontFile = [];
+        var fileName;
+
+        $.each(data.items, function (key, value) {
+
+          var file = value.family.replace(" ", "").toLowerCase();
+          fontFile.push(file);
+
+        });
+
+
+         $("#font-type").slider({
+          min: 0,
+          max: fontFile.length,
+          slide : function(event, ui) {
+
+            let fontName = fontFile[ui.value];
+            let message;
+
+
+            if(fontName != null || fontName !='') {
+
+              $.getJSON("https://crossorigin.me/http://lasvegaswebdesign.co/test/font/ofl/"+fontName+"/METADATA.json", function (data) {
+                
+
+                $.each(data.fonts, function (key, value) {
+
+                  //fileName = "http://gdiexpress.com/ofl/"+fontName+"/" + value.filename;
+
+                  addGoogleFont(value.name); // for example
+
+                  $('#text').css("font-family", value.name);
+
+                  message = value.name;
+
+                  // Insert
+                  $("#selected").html(message);
+
+                });
+
+
+              });
+
+            } else {
+
+              message = "ERROR Ocurred!";
+
+              // Insert
+              $("#selected").html(message);
+
+            }
+     
+
+          }
+
+         });
+
+      });
+
+     
+    });
+  </script>
+
+  <style>
+    #font-type {
+      width: 400px;
+    }
+  </style>
+
+</head>
+<body>
+  <div id="selected">Nothing..</div>
+  <br>
+  <br>
+  <div id="font-type"></div>
+  <br><br>
+  <div id="text">This is some sample text.</div>
+</body>
+</html>
