@@ -1,0 +1,84 @@
+<html>
+    <head>
+        <script src="rangy-core.js"></script>
+        <script src="rangy-classapplier.js"></script>
+        <script src="undo.js"></script>
+        <script src="medium.js"></script>
+        <link rel="stylesheet" href="medium.css">
+    </head>
+    <body>
+    
+         <div class="toolbar-top">
+   <span class="toolbar">
+    <span class="bold" style="font-weight: bold; color: #66d9ef">B</span>
+    <span class="underline" style="text-decoration: underline; color: #a6e22e">U</span>
+    <span class="italic" style="font-style: italic; color: #f92672">I</span>
+    <span class="strike" style="text-decoration: line-through; color: #e6db74">S</span>
+   </span>
+  </div>
+  <div id="rich_with_invoke_element" class="article demo">
+   Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce rutrum dapibus dictum. Etiam tempor a enim id sagittis. Donec sodales varius elementum. In iaculis consequat enim, et pellentesque erat accumsan ut. Nulla nec lacus nisi. Nullam id interdum risus, sit amet sollicitudin ipsum. Ut vitae rutrum nulla.<br>
+   <br>
+   Vivamus eget dolor est. Donec lobortis felis metus, vel placerat nunc iaculis id. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Praesent eu neque dictum, pulvinar massa faucibus, accumsan diam. Vestibulum pharetra massa dolor, ut tincidunt nisl suscipit vitae.
+  </div>
+ 
+    
+        <script>
+            (function(){
+	var article = document.getElementById('rich_with_invoke_element'),
+		container = article.parentNode,
+	    medium = new Medium({
+	        element: article,
+	        mode: Medium.richMode,
+	        placeholder: 'Your Article',
+	        attributes: null,
+	        tags: null,
+		    pasteAsText: false
+	    });
+
+		article.highlight = function() {
+		if (document.activeElement !== article) {
+			medium.select();
+		}
+	};
+
+
+	container.querySelector('.bold').onmousedown = function() {
+		article.highlight();
+		medium.invokeElement('b', {
+		    title: "I'm bold!",
+		    style: "color: #66d9ef"
+	    });
+		return false;
+	};
+
+	container.querySelector('.underline').onmousedown = function() {
+		article.highlight();
+		medium.invokeElement('u', {
+			title: "I'm underlined!",
+			style: "color: #a6e22e"
+		});
+		return false;
+	};
+
+	container.querySelector('.italic').onmousedown = function() {
+		article.highlight();
+		medium.invokeElement('i', {
+			title: "I'm italics!",
+			style: "color: #f92672"
+		});
+		return false;
+	};
+
+	container.querySelector('.strike').onmousedown = function() {
+		article.highlight();
+		medium.invokeElement('strike', {
+			title: "I've been struck!",
+			style: "color: #e6db74"
+		});
+		return false;
+	};
+})();
+        </script>
+    </body>
+</html>
