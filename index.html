@@ -1,84 +1,265 @@
 <html>
     <head>
+    	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
+		<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
         <script src="rangy-core.js"></script>
         <script src="rangy-classapplier.js"></script>
         <script src="undo.js"></script>
         <script src="medium.js"></script>
         <link rel="stylesheet" href="medium.css">
+        <style>
+
+        	/*
+        	* Text Editor UI Icons.
+        	*/
+        	.icon {
+        		background: url('images/text-editor-ui.png') no-repeat top left;
+        		width: 31px;
+        		height: 31px;
+        		cursor: pointer;
+        	}
+
+			.icon.align:hover { background-position: 0 0; } 
+			.icon.align { background-position: -36px 0; } 
+			.icon.back { background-position: -72px 0; } 
+			.icon.bold:hover { background-position: -108px 0; } 
+			.icon.bold { background-position: -144px 0; } 
+			.icon.bullet:hover { background-position: -180px 0; } 
+			.icon.bullet { background-position: -216px 0; } 
+			.icon.font-color:hover { background-position: -252px 0; } 
+			.icon.font-color-inactive { background-position: -288px 0; } 
+			.icon.font-color { background-position: -324px 0; } 
+			.icon.font-highlight:hover { background-position: -360px 0; } 
+			.icon.font-highlight-inactive { background-position: -396px 0; } 
+			.icon.font-highlight { background-position: -432px 0; } 
+			.icon.font-selection:hover { background-position: -468px 0; } 
+			.icon.font-selection { background-position: -504px 0; } 
+			.icon.font-size:hover { background-position: -540px 0; } 
+			.icon.font-size-inactive { background-position: -576px 0; } 
+			.icon.font-size { background-position: -612px 0; } 
+			.icon.font-style:hover { background-position: -648px 0; } 
+			.icon.font-style-inactive { background-position: -684px 0; } 
+			.icon.font-style { background-position: -720px 0; } 
+			.icon.handle-large:hover { background-position: -756px 0; } 
+			.icon.handle-large { background-position: -792px 0; } 
+			.icon.handle-small:hover { background-position: -828px 0; } 
+			.icon.handle-small { background-position: -864px 0; } 
+			.icon.italic:hover { background-position: -900px 0; } 
+			.icon.italic { background-position: -936px 0; } 
+			.icon.strike:hover { background-position: -972px 0; } 
+			.icon.strike { background-position: -1008px 0; } 
+			.icon.underline:hover { background-position: -1044px 0; } 
+			.icon.underline { background-position: -1080px 0; } 
+
+
+
+        	#paper-text-edit, #paper-text-style, #paper-text-type {
+        		display: none;
+        	}
+
+
+        	ul {
+			    list-style-type: none;
+			    margin: 0px;
+			    padding: 0;
+			}
+
+        	li {
+        		float: left;
+        		margin: 0px 0px 0px 7px;
+        	}
+
+
+        	.slider-label {
+        		font-size: 10px;
+        		color: #000000;
+        		margin-top: 20px;
+        	}
+
+        	/*
+        	* jQuery UI modifications.
+        	*/
+
+        	.ui-slider {
+        		background: #84868C;
+        		height: 1px;
+        	}
+
+        	.ui-slider-horizontal .ui-state-default {
+        		background: transparent url('images/text-editor-ui.png') no-repeat;
+        		background-position: -792px 0;
+        		width: 31px;
+        		height: 31px;
+        	}
+
+        	.ui-slider-handle {
+        		outline-style: none;
+			    box-shadow   : none;
+				border-color : transparent;
+        	}
+
+        	.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
+        		border: 0px;
+        		margin-top: -9px;
+        	}
+
+        	.ui-state-hover{
+        		background-position: -756px 0 !important;
+        	}
+
+        	.ui-state-active{
+        		background-position: -756px 0 !important;
+        	}
+
+
+        </style>
     </head>
     <body>
     
-         <div class="toolbar-top">
-   <span class="toolbar">
-    <span class="bold" style="font-weight: bold; color: #66d9ef">B</span>
-    <span class="underline" style="text-decoration: underline; color: #a6e22e">U</span>
-    <span class="italic" style="font-style: italic; color: #f92672">I</span>
-    <span class="strike" style="text-decoration: line-through; color: #e6db74">S</span>
-   </span>
-  </div>
-  <div id="rich_with_invoke_element" class="article demo">
-   Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce rutrum dapibus dictum. Etiam tempor a enim id sagittis. Donec sodales varius elementum. In iaculis consequat enim, et pellentesque erat accumsan ut. Nulla nec lacus nisi. Nullam id interdum risus, sit amet sollicitudin ipsum. Ut vitae rutrum nulla.<br>
-   <br>
-   Vivamus eget dolor est. Donec lobortis felis metus, vel placerat nunc iaculis id. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Praesent eu neque dictum, pulvinar massa faucibus, accumsan diam. Vestibulum pharetra massa dolor, ut tincidunt nisl suscipit vitae.
-  </div>
+	   <div class="toolbar-top">
+
+	   <ul id="paper-text-editor">
+		<li class='icon font-style'></li>
+		<li class='icon bold'></li>
+		<li class='icon underline'></li>
+		<li class='icon italic'></li>
+		<li class='icon strike'></li>
+		<li class='icon align'></li>
+		<li class='icon bullet'></li>
+	   </ul>
+
+
+	   <ul id="paper-text-style">
+	   	<li class='icon back'></li>
+	   	<li class='icon font-style-inactive'></li>
+
+	   	<li class='icon font-selection'></li>
+	   	<li class='icon font-size'></li>
+	   	<li class='icon font-color'></li>
+	   	<li class='icon font-highlight'></li>
+
+
+		<!--<li class='icon font-color-inactive'></li>
+		<li class='icon font-highlight-inactive'></li>
+		<li class='icon font-size-inactive'></li>-->
+		
+		
+	   </ul>
+
+
+	   	<ul id="paper-text-type">
+	        <li class='icon back'></li>
+	   		<li class='icon font-color-inactive'></li>
+	   		<li style="width: 100px" class="slider"><div class="slider-label">STYLE</div></li>
+	   		<li style="width: 100px;" class="slider"><div class="slider-label">NOISE</div></li>
+	        <li style="width: 300px;" class="slider"><div class="slider-label">TYPE</div></li>
+	   	</ul>
+
+	  </div>
+
+	  <br><br><br>
+	  <div data-id="1" id="editor">
+	   Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce rutrum dapibus dictum. Etiam tempor a enim id sagittis. Donec sodales varius elementum. In iaculis consequat enim, et pellentesque erat accumsan ut. Nulla nec lacus nisi. Nullam id interdum risus, sit amet sollicitudin ipsum. Ut vitae rutrum nulla.<br>
+	   <br>
+	   Vivamus eget dolor est. Donec lobortis felis metus, vel placerat nunc iaculis id. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Praesent eu neque dictum, pulvinar massa faucibus, accumsan diam. Vestibulum pharetra massa dolor, ut tincidunt nisl suscipit vitae.
+	  </div>
+
  
     
         <script>
             (function(){
-	var article = document.getElementById('rich_with_invoke_element'),
-		container = article.parentNode,
-	    medium = new Medium({
-	        element: article,
-	        mode: Medium.richMode,
-	        placeholder: 'Your Article',
-	        attributes: null,
-	        tags: null,
-		    pasteAsText: false
-	    });
 
-		article.highlight = function() {
-		if (document.activeElement !== article) {
-			medium.select();
-		}
-	};
+            	$(".slider").slider(
+            		{
+            			min: 0,
+            			max: 10000
+            		}
+            	);
 
 
-	container.querySelector('.bold').onmousedown = function() {
-		article.highlight();
-		medium.invokeElement('b', {
-		    title: "I'm bold!",
-		    style: "color: #66d9ef"
-	    });
-		return false;
-	};
+				var article  = $("[data-id='1']")[0];
 
-	container.querySelector('.underline').onmousedown = function() {
-		article.highlight();
-		medium.invokeElement('u', {
-			title: "I'm underlined!",
-			style: "color: #a6e22e"
-		});
-		return false;
-	};
+				console.log(article);
 
-	container.querySelector('.italic').onmousedown = function() {
-		article.highlight();
-		medium.invokeElement('i', {
-			title: "I'm italics!",
-			style: "color: #f92672"
-		});
-		return false;
-	};
 
-	container.querySelector('.strike').onmousedown = function() {
-		article.highlight();
-		medium.invokeElement('strike', {
-			title: "I've been struck!",
-			style: "color: #e6db74"
-		});
-		return false;
-	};
-})();
+				var container = article.parentNode;
+
+				var medium = new Medium(
+					{
+				        element    : article,
+				        mode       : Medium.richMode,
+				        placeholder: '',
+				        attributes : null,
+				        tags       : null,
+					    pasteAsText: false,
+					    attributes : {
+							remove : ['style', 'class']
+						}
+					}
+				);
+
+				article.highlight = function() {
+					if (document.activeElement !== article) {
+						medium.select();
+					}
+				};
+
+
+				$(".font-style").on("click", function() {
+					$("#paper-text-editor").css({display:"none"});
+					$("#paper-text-style").fadeIn(700);
+				});
+
+				$("#paper-text-style .back").on("click", function() {
+					$("#paper-text-style").css({display:"none"});
+					$("#paper-text-editor").fadeIn(700);
+				});
+
+				$(".font-selection").on("click", function() {
+					$("#paper-text-style").css({display:"none"});
+					$("#paper-text-type").fadeIn(700);
+				});
+
+
+				container.querySelector('.bold').onmousedown = function() {
+					article.highlight();
+					medium.invokeElement('b', {
+					    title: "",
+					    style: ""
+				    });
+					return false;
+				};
+
+				container.querySelector('.underline').onmousedown = function() {
+					article.highlight();
+					medium.invokeElement('u', {
+						title: "",
+						style: ""
+					});
+					return false;
+				};
+
+				container.querySelector('.italic').onmousedown = function() {
+					article.highlight();
+					medium.invokeElement('i', {
+						title: "",
+						style: ""
+					});
+					return false;
+				};
+
+				container.querySelector('.strike').onmousedown = function() {
+					article.highlight();
+					medium.invokeElement('strike', {
+						title: "",
+						style: ""
+					});
+					return false;
+				};
+
+
+			})();
         </script>
     </body>
 </html>
