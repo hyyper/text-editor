@@ -54,7 +54,7 @@
 
 
 
-        	#paper-text-edit, #paper-text-style, #paper-text-type {
+        	#paper-text-edit, #paper-text-style, #paper-text-type, #paper-text-size {
         		display: none;
         	}
 
@@ -72,9 +72,9 @@
 
 
         	.slider-label {
-        		font-size: 10px;
+        		font-size: 9px;
         		color: #000000;
-        		margin-top: 20px;
+        		margin-top: -23px;
         	}
 
         	/*
@@ -84,6 +84,7 @@
         	.ui-slider {
         		background: #84868C;
         		height: 1px;
+        		margin-top: 20px;
         	}
 
         	.ui-slider-horizontal .ui-state-default {
@@ -153,7 +154,13 @@
 	   		<li class='icon font-color-inactive'></li>
 	   		<li style="width: 100px" class="slider"><div class="slider-label">STYLE</div></li>
 	   		<li style="width: 100px;" class="slider"><div class="slider-label">NOISE</div></li>
-	        <li style="width: 300px;" class="slider"><div class="slider-label">TYPE</div></li>
+	        <li style="width: 300px;" class="slider" id="font-type"><div class="slider-label">TYPE</div></li>
+	   	</ul>
+
+	   	<ul id="paper-text-size">
+	        <li class='icon back'></li>
+	   		<li class='icon font-color-inactive'></li>
+	        <li style="width: 300px;" class="slider" id="font-size"><div class="slider-label">SIZE</div></li>
 	   	</ul>
 
 	  </div>
@@ -167,21 +174,99 @@
 
  
     
-        <script>
-            (function(){
+        <script type="text/javascript">
+        	$(function() {
 
-            	$(".slider").slider(
-            		{
-            			min: 0,
-            			max: 10000
-            		}
-            	);
+        		"use strict";
+
+        		function addGoogleFont(FontName) { 
+			       // http://fonts.googleapis.com/css?family=Tangerine
+					$("head").append("<link href='http://fonts.googleapis.com/css?family=" + FontName + "' rel='stylesheet' type='text/css'>");
+			    }
+
+
+			    $("#font-size").slider({
+		          min: 5,
+		          max: 100,
+		          slide : function(event, ui) {
+                    medium.focus();
+                    medium.invokeElement('span', {
+                  		style: "font-size:" + ui.value + "px;"
+                	});
+                  }
+		        });
+
+
+		      $.getJSON("https://crossorigin.me/http://lasvegaswebdesign.co/test/font/meta.json", function (data) {
+
+		        var fontFile = [];
+		        var fileName;
+
+		        $.each(data.items, function (key, value) {
+
+		          var file = value.family.replace(" ", "").toLowerCase();
+		          fontFile.push(file);
+
+		        });
+
+
+		        $("#font-type").slider({
+		          min: 0,
+		          max: fontFile.length,
+		          slide : function(event, ui) {
+
+		            let fontName = fontFile[ui.value];
+
+
+		            if(fontName != null || fontName !='') {
+
+		              $.getJSON("https://crossorigin.me/http://lasvegaswebdesign.co/test/font/ofl/"+fontName+"/METADATA.json", function (data) {
+		                
+
+		                $.each(data.fonts, function (key, value) {
+
+		                  //fileName = "http://gdiexpress.com/ofl/"+fontName+"/" + value.filename;
+
+		                  addGoogleFont(value.name); // for example
+
+		                  $('#text').css("font-family", value.name);
+
+		                    medium.focus();
+		                    medium.invokeElement('span', {
+		                  		style: "font-family:" + value.name + ";"
+		                	});
+
+		                });
+
+
+		              });
+
+		            } else {
+
+		              message = "ERROR Ocurred!";
+
+		              // Insert
+		              $("#selected").html(message);
+
+		            }
+		     
+
+		          }
+
+		         });
+
+		      });
+
+
+        		
+            	var range;
+
+            	$("[data-id='1']").on("mouseup", function() {
+            		console.log("select");
+            	});
 
 
 				var article  = $("[data-id='1']")[0];
-
-				console.log(article);
-
 
 				var container = article.parentNode;
 
@@ -195,6 +280,13 @@
 					    pasteAsText: false,
 					    attributes : {
 							remove : ['style', 'class']
+						},
+						beforeInsertHtml: function () {
+							console.log(this);
+						},
+						beforeAddTag: function (tag, shouldFocus, isEditable, afterElement) {
+							console.log(tag);
+							console.log("look");
 						}
 					}
 				);
@@ -206,20 +298,50 @@
 				};
 
 
-				$(".font-style").on("click", function() {
-					$("#paper-text-editor").css({display:"none"});
-					$("#paper-text-style").fadeIn(700);
-				});
+				
 
-				$("#paper-text-style .back").on("click", function() {
-					$("#paper-text-style").css({display:"none"});
-					$("#paper-text-editor").fadeIn(700);
-				});
 
-				$(".font-selection").on("click", function() {
+
+
+				container.querySelector('.font-selection').onmousedown = function() {
 					$("#paper-text-style").css({display:"none"});
 					$("#paper-text-type").fadeIn(700);
-				});
+					return false;
+				};
+
+				container.querySelector('.font-style').onmousedown = function() {
+					$("#paper-text-editor").css({display:"none"});
+					$("#paper-text-style").fadeIn(700);
+					return false;
+				};
+
+				container.querySelector('.font-size').onmousedown = function() {
+					$("#paper-text-style").css({display:"none"});
+					$("#paper-text-size").fadeIn(700);
+					return false;
+				};
+
+
+				container.querySelector('#paper-text-type .back').onmousedown = function() {
+					$("#paper-text-type").css({"display":"none"});
+					$("#paper-text-style").fadeIn(700);
+					return false;
+				};
+
+
+				container.querySelector('#paper-text-style .back').onmousedown = function() {
+					$("#paper-text-style").css({"display":"none"});
+					$("#paper-text-editor").fadeIn(700);
+					return false;
+				};
+
+				container.querySelector('#paper-text-size .back').onmousedown = function() {
+					$("#paper-text-size").css({"display":"none"});
+					$("#paper-text-style").fadeIn(700);
+					return false;
+				};
+
+
 
 
 				container.querySelector('.bold').onmousedown = function() {
@@ -258,8 +380,7 @@
 					return false;
 				};
 
-
-			})();
+        	});
         </script>
     </body>
 </html>
