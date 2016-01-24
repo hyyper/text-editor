@@ -72,9 +72,16 @@
 
 
         	.slider-label {
-        		font-size: 9px;
-        		color: #000000;
         		margin-top: -23px;
+        		font-size: 9px;
+        		color: #008bff;
+        	}
+
+
+        	.bottom-label {
+        		font-size: 12px;
+        		margin-top: 34px;
+        		position: absolute;
         	}
 
         	/*
@@ -160,6 +167,7 @@
 	   	<ul id="paper-text-size">
 	        <li class='icon back'></li>
 	   		<li class='icon font-color-inactive'></li>
+	   		<li><div class="slider-label bottom-label" id="size-display">10px</div></li>
 	        <li style="width: 300px;" class="slider" id="font-size"><div class="slider-label">SIZE</div></li>
 	   	</ul>
 
@@ -193,6 +201,10 @@
                     medium.invokeElement('span', {
                   		style: "font-size:" + ui.value + "px;"
                 	});
+
+                    // Inserts new value for visual display.
+                	$("#size-display").html(ui.value + "px");
+
                   }
 		        });
 
