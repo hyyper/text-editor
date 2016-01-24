@@ -10,6 +10,18 @@
         <link rel="stylesheet" href="medium.css">
         <style>
 
+
+        	/*
+        	* Tool Bar
+        	*/
+        	#toolbar-top {
+        		display: none;
+        		position: absolute;
+        		background-color: #FFFFFF;
+        		padding: 6px 6px 11px 6px;
+        		border-radius: 4px;
+        	}
+
         	/*
         	* Text Editor UI Icons.
         	*/
@@ -80,7 +92,7 @@
 
         	.bottom-label {
         		font-size: 12px;
-        		margin-top: 34px;
+        		margin-top: 27px;
         		position: absolute;
         	}
 
@@ -121,57 +133,70 @@
         	}
 
 
+        	/*
+        	* Contenteditable box.
+        	*/
+        	[contenteditable="true"]:active,
+			[contenteditable="true"]:focus{
+				border: none;
+				outline: none;
+			}
+
+
+
+
         </style>
     </head>
     <body>
     
-	   <div class="toolbar-top">
+	   <div id="toolbar-top">
 
-	   <ul id="paper-text-editor">
-		<li class='icon font-style'></li>
-		<li class='icon bold'></li>
-		<li class='icon underline'></li>
-		<li class='icon italic'></li>
-		<li class='icon strike'></li>
-		<li class='icon align'></li>
-		<li class='icon bullet'></li>
-	   </ul>
-
-
-	   <ul id="paper-text-style">
-	   	<li class='icon back'></li>
-	   	<li class='icon font-style-inactive'></li>
-
-	   	<li class='icon font-selection'></li>
-	   	<li class='icon font-size'></li>
-	   	<li class='icon font-color'></li>
-	   	<li class='icon font-highlight'></li>
+		   <ul id="paper-text-editor">
+			<li class='icon font-style'></li>
+			<li class='icon bold'></li>
+			<li class='icon underline'></li>
+			<li class='icon italic'></li>
+			<li class='icon strike'></li>
+			<li class='icon align'></li>
+			<li class='icon bullet'></li>
+		   </ul>
 
 
-		<!--<li class='icon font-color-inactive'></li>
-		<li class='icon font-highlight-inactive'></li>
-		<li class='icon font-size-inactive'></li>-->
-		
-		
-	   </ul>
+		   <ul id="paper-text-style">
+		   	<li class='icon back'></li>
+		   	<li class='icon font-style-inactive'></li>
+
+		   	<li class='icon font-selection'></li>
+		   	<li class='icon font-size'></li>
+		   	<li class='icon font-color'></li>
+		   	<li class='icon font-highlight'></li>
 
 
-	   	<ul id="paper-text-type">
-	        <li class='icon back'></li>
-	   		<li class='icon font-color-inactive'></li>
-	   		<li style="width: 100px" class="slider"><div class="slider-label">STYLE</div></li>
-	   		<li style="width: 100px;" class="slider"><div class="slider-label">NOISE</div></li>
-	        <li style="width: 300px;" class="slider" id="font-type"><div class="slider-label">TYPE</div></li>
-	   	</ul>
+			<!--<li class='icon font-color-inactive'></li>
+			<li class='icon font-highlight-inactive'></li>
+			<li class='icon font-size-inactive'></li>-->
+			
+			
+		   </ul>
 
-	   	<ul id="paper-text-size">
-	        <li class='icon back'></li>
-	   		<li class='icon font-color-inactive'></li>
-	   		<li><div class="slider-label bottom-label" id="size-display">10px</div></li>
-	        <li style="width: 300px;" class="slider" id="font-size"><div class="slider-label">SIZE</div></li>
-	   	</ul>
 
-	  </div>
+		   	<ul id="paper-text-type">
+		        <li class='icon back'></li>
+		   		<li class='icon font-color-inactive'></li>
+		   		<li style="width: 100px" class="slider" id="font-style"><div class="slider-label">STYLE</div></li>
+		   		<li style="width: 100px;" class="slider" id="font-noise"><div class="slider-label">NOISE</div></li>
+		   		<li><div class="slider-label bottom-label" id="type-display">none</div></li>
+		        <li style="width: 300px;" class="slider" id="font-type"><div class="slider-label">TYPE</div></li>
+		   	</ul>
+
+		   	<ul id="paper-text-size">
+		        <li class='icon back'></li>
+		   		<li class='icon font-color-inactive'></li>
+		   		<li><div class="slider-label bottom-label" id="size-display">10px</div></li>
+		        <li style="width: 300px;" class="slider" id="font-size"><div class="slider-label">SIZE</div></li>
+		   	</ul>
+
+	  	</div>
 
 	  <br><br><br>
 	  <div data-id="1" id="editor">
@@ -222,6 +247,27 @@
 		        });
 
 
+		        // Font Style slider.
+		        $("#font-style").slider({
+
+		          min: 0,
+		          max: 100,
+		          slide : function(event, ui) {
+		          }
+
+		        });
+
+		        // Font Noise slider.
+		        $("#font-noise").slider({
+
+		          min: 0,
+		          max: 100,
+		          slide : function(event, ui) {
+		          }
+
+		        });
+
+
 		        $("#font-type").slider({
 		          min: 0,
 		          max: fontFile.length,
@@ -248,6 +294,8 @@
 		                  		style: "font-family:" + value.name + ";"
 		                	});
 
+		                	$("#type-display").html(value.name);
+
 		                });
 
 
@@ -255,10 +303,10 @@
 
 		            } else {
 
-		              message = "ERROR Ocurred!";
+		              message = "Couldn't load font.";
 
 		              // Insert
-		              $("#selected").html(message);
+		              $("#type-display").html(message);
 
 		            }
 		     
@@ -273,8 +321,34 @@
         		
             	var range;
 
-            	$("[data-id='1']").on("mouseup", function() {
-            		console.log("select");
+
+            	$(window).on("keydown", function() {
+            		$("#toolbar-top").fadeOut(50);
+            	});
+
+            	/*
+            	* Display tool bar.
+            	*/
+            	$(window).on("click", function() {
+
+            		
+
+            		// Get highlighted text.
+            		var selectedText = rangy.getSelection().toString();
+
+            		// Check if anything is selected. If so fade in toolbar.
+					if(selectedText != "") {
+						
+						//
+            			var pos = window.getSelection().getRangeAt(0).getClientRects()[0];
+
+            			$("#toolbar-top").css({ "top": pos.top - 56 + "px", "left": pos.left + "px" });
+						$("#toolbar-top").fadeIn(300);
+
+					} else {
+						$("#toolbar-top").fadeOut(50);
+					}
+
             	});
 
 
