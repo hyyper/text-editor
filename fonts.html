@@ -21,7 +21,7 @@
       }
 
 
-     $.getJSON("https://crossorigin.me/http://lasvegaswebdesign.co/test/font/meta.json", function (data) {
+      $.getJSON("https://crossorigin.me/http://lasvegaswebdesign.co/test/font/meta.json", function (data) {
 
         var fontFile = [];
         var fileName;
@@ -34,7 +34,7 @@
         });
 
 
-         $("#font-type").slider({
+        $("#font-type").slider({
           min: 0,
           max: fontFile.length,
           slide : function(event, ui) {
@@ -54,7 +54,57 @@
 
                   addGoogleFont(value.name); // for example
 
+                  console.log(value.name);
+
                   $('#text').css("font-family", value.name);
+
+                  // Creates object.
+                  var JSONObject = {};
+
+
+                  // Creates object structure.
+                  JSONObject[value.name] = { 
+
+                    style: {
+
+                      old     : null,
+                      modern  : null,
+                      elegant : null,
+                      artistic: null
+
+                    }, 
+
+                    noise: {
+
+                      quiet   : null,
+                      monotone: null,
+                      loud    : null
+
+                    } 
+
+                  };
+
+                  // Array of all categories.
+                  var style = ['old','modern','elegant','artistic'];
+                  var noise = ['quiet','monotone','loud'];
+
+                  $.each(style, function(i, styleValue) {
+
+                    console.log($("[name='"+ styleValue +"']").prop("checked"));
+                   
+                   // Checks attribute and stores if it's checked or not.
+                   JSONObject[value.name]["style"][styleValue] = $("[name='"+ styleValue +"']").prop("checked");
+
+                   // Remove checks.
+                   $("[name='"+ styleValue +"']").attr("checked", false);
+
+                 });
+
+
+                  //
+                  console.log(JSONObject);
+
+
 
                   message = value.name;
 
@@ -100,5 +150,33 @@
   <div id="font-type"></div>
   <br><br>
   <div id="text">This is some sample text.</div>
+
+  
+  <div id="style" style="float: left;">
+    <!-- old, modern, elegant, artistic -->
+    <h3>Style</h3>
+    <input type="checkbox" name="old"> Old
+    <br>
+    <input type="checkbox" name="modern"> Modern
+    <br>
+    <input type="checkbox" name="elegant"> Elegant
+    <br>
+    <input type="checkbox" name="artistic"> Artistic
+
+    <br>
+    <br>
+  </div>
+
+  <div id="noise" style="float: left;">
+    <!-- quiet, monotone, loud -->
+    <h3>Noise</h3>
+    <input type="checkbox" name="quiet"> Quiet
+    <br>
+    <input type="checkbox" name="monotone"> Monotone
+    <br>
+    <input type="checkbox" name="loud"> Loud
+    <br>
+  </div>
+
 </body>
 </html>
